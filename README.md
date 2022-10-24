@@ -15,5 +15,5 @@ Here are some ideas to get you started:
 - ⚡ Fun fact: ...
 -->
 Time-segmented datasets:
-(1)Java
-(2)C++
+- (1)Java
+- (2)C++

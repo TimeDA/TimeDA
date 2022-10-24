@@ -1,0 +1,107 @@
+#include <stdio.h>
+ #include <iostream>
+ #include <string>
+ #include <sstream>
+ #include <vector>
+ #include <algorithm>
+ #include <queue>
+ #include <deque>
+ #include <cmath>
+ #include <ctime>
+ #include <stack>
+ #include <set>
+ #include <map>
+ #include <cassert>
+ #include <memory.h>
+ 
+ using namespace std;
+ 
+ #define mp make_pair
+ #define pb push_back
+ #define all(a) a.begin(), a.end()
+ 
+ typedef long long li;
+ typedef long double ld;
+ typedef vector<int> vi;
+ typedef pair <int, int> pi;
+ 
+ void solve();
+ //void precalc();
+ #define FILENAME "change me please"
+ int main(){
+ 	string s = FILENAME;
+ #ifdef room210
+ 	freopen("in.txt", "r", stdin);
+ 	freopen("out.txt", "w", stdout);
+ 	//cout<<FILENAME<<endl;
+ 	//assert (s != "change me please");
+ 	clock_t start = clock();
+ #else
+ 	//freopen(FILENAME ".in", "r", stdin);
+ 	//freopen(FILENAME".out", "w", stdout);
+ #endif
+ 	//cout.sync_with_stdio(0);
+ 	int t = 1;
+ 	//precalc();
+ 	//cout << "done!\n";
+ 	//cin >> t;
+ 	//gen();
+ 	while (t--)
+ 		solve();
+ 	/*
+ #ifdef room210
+ 	cout<<"\n\n\n"<<(clock() - start) / 1.0 / CLOCKS_PER_SEC<<"\n\n\n";
+ #endif*/
+ 	return 0;
+ }
+ 
+ #define int li
+ 
+ vector <int> fair;
+ 
+ int res (int n) {
+ 	return upper_bound(all(fair), n) - fair.begin();
+ }
+ 
+ void solve () {
+ 	for (int n = 1; n <= 10000000; ++n) {
+ 		vector <int> now;
+ 		int k = n;
+ 		while (k)
+ 			now.push_back(k % 10), k /= 10;
+ 		bool f = true;
+ 		for (int i = 0; i < now.size(); ++i)
+ 			if (now[i] != now[now.size() - 1 - i]) {
+ 				f = false;
+ 				break;
+ 			}
+ 		if (f) {
+ 			k = n * n;
+ 			int num = k;
+ 			now.clear();
+ 			while (k)
+ 				now.push_back(k % 10), k /= 10;
+ 			f = true;
+ 			for (int i = 0; i < now.size(); ++i)
+ 				if (now[i] != now[now.size() - 1 - i]) {
+ 					f = false;
+ 					break;
+ 				}
+ 			if (f)
+ 				fair.push_back(num);
+ 			}
+ 	}
+ 
+ 	/*for (int i = 0; i < 10; ++i)
+ 		cout << fair[i] << ' ' ;*/
+ 
+ 	int t;
+ 	cin >> t;
+ 
+ 	for (int w = 0; w < t; ++w) {
+ 		int a, b;
+ 		cin >> a >> b;
+ 		cout << "Case #" << w + 1 << ": " << res(b) - res(a - 1) << "\n";
+ 	}
+ 
+ }

@@ -1,0 +1,16 @@
+batch_size: 64
+classifier_type: nn
+epochs: 100
+hidden_dim: 256
+learning_rate: 0.01
+log_batches: 10
+mode: snapshot
+seed: 239
+test_size: 1
+skip_read_write: 0
+final_test: 0
+stage: supervised
+source_data_path: /home/zss/data/project5/nn_DA/processed/gcj_java_12_18/gcj2013/java/
+negative_data_path: /home/zss/data/project5/nn_DA/processed/gcj_java_12_18/gcj_negative/java/
+target_data_path: /home/zss/data/project5/nn_DA/processed/gcj_java_12_18/gcj2018/java/
+source_folder: /home/zss/data/project5/nn_DA/processed/gcj_java_12_18/java/

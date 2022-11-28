@@ -1,9 +1,9 @@
 # Introduction
-
+We use TimeDA to mitigate the effects of time evolution on the PbNN model.
 
 # Operation steps
-(1) run run_classification.py
+run run_classification.py
 
 # Operating environment
-- (1) Ubuntu environment
-- (2) Python3 environment
+- Ubuntu environment
+- Python3 environment

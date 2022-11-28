@@ -14,6 +14,10 @@ Here are some ideas to get you started:
 - 😄 Pronouns: ...
 - ⚡ Fun fact: ...
 -->
-Time-segmented datasets:
+We propose a method to generate negative samples of the program.
+
+We propose an innovative framework TimeDA, which alleviates the problem of reduced accuracy of Deep Learning (DL)-based source code authorship attribution due to time evolution by adding new feature extractors to the original DL-based code attribution framework to enhance the original model's ability to learn source domain features without requiring new or more source data. Moreover, we employ a centroid-based pseudo-labeling strategy using neighborhood clustering entropy for adaptive learning to improve the robustness of DL-based code authorship attribution.
+
+We use two time-segmented datasets for evaluation, both of which are introduced in our work.
 - (1) Java
 - (2) C++

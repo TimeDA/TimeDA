@@ -14,22 +14,13 @@ def scan_style(program_path, author_path):
             sub_path = os.path.join(root, sub_dir)
             file_list = os.listdir(sub_path) if os.path.isdir(sub_path) else [sub_path]
             for file_name in file_list:
-                # 文件路径hh
                 file_path = os.path.join(root, sub_dir, file_name)
                 author_list = os.listdir(author_path) if os.path.isdir(author_path) else [author_path]
                 for author_name in author_list:
                     if not author_name.endswith('.txt'): continue
                     author_name = author_name.split('.')[0]
-                    # 如果两个作者名字一样，则表示同一个程序，不用转化
                     if sub_dir == author_name: continue
-                    # try:
                     transform.scan_trans(file_path, author_name)
-                    # except Exception as ex:
-                    #     f = open('./Exception/Exception.txt', 'a')
-                    #     f.write(traceback.format_exc() + '\n\n')
-                    #     scan.cmd('rm -rf ./style/transform/*')
-                    #     continue
-                    #把生成的文件移动到相应的作者目录下
                     move_change(file_name, sub_dir, author_name)
                     
 def move_change(file_name, pre_author_name, author_name):
@@ -53,10 +44,7 @@ def move_change(file_name, pre_author_name, author_name):
     scan.cmd(command='mv ./style/transform/* '+path)
     scan.cmd(change_name)
 if __name__ == '__main__':
-    # 作者program文件
     program_path = './pre_file/java_cpp_file'
-    # 作者的风格文件
     author_path = './author_style'
-    # 转化后的作者program文件
     transform_file = './pre_file/transform_file'
     scan_style(program_path, author_path)

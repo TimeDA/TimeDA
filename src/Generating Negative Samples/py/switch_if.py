@@ -44,32 +44,24 @@ def transform_default(default_elem):
             node_elem.tail  = '\n}'
             default_elem[0].getparent().insert(index+1, node_elem)
 def transform_case(case_elems, var):
-    # 先转化第一个case
     case_first = case_elems[0]
     case_first.tag = 'if'
     case_first.text = 'if'
     transform_case_content(case_first, var)
-    # 从第二个case开始转化
     for elem in case_elems[1:]:
         elem.tag = 'if'
         elem.text = 'else if'
         transform_case_content(elem, var)
 def transform_case_content(case_elem, var):
     global flag
-    # 深拷贝一个变量
     var_elem = copy.deepcopy(var)
-    # 将==号增加到变量后面
     operate_elem = Element('operate')
     operate_elem.text = '=='
     var_elem.append(operate_elem)
-    # 讲 case 的值增加到条件里面
     for case_child in case_elem:
         var_elem.append(case_child)
-    # 把“：”去掉
     var_elem[-1].tail = ')'
-    # 将条件放到if后面
     case_elem.append(var_elem)
-    # 修改case后面的执行语句
     index = case_elem.getparent().index(case_elem)
     node = case_elem.getparent()[index + 1]
     tag = etree.QName(node)
@@ -87,7 +79,6 @@ def transform_case_content(case_elem, var):
         case_elem.getparent().insert(index + 1, node_elem)
 def judge_transform(switch_elem):
     global flag_switch
-    # 判断default
     default_elem = get_default(switch_elem)
     if len(default_elem) > 0:
         index = default_elem[0].getparent().index(default_elem[0])
@@ -105,7 +96,6 @@ def judge_transform(switch_elem):
                 flag_switch = False
                 return
 
-    # 判断case
     case_elems = get_case(switch_elem)
     if len(case_elems)>0:
         for case_elem in case_elems:
@@ -135,35 +125,26 @@ def judge_transform(switch_elem):
 def trans_tree(e):
     global flag
     global flag_switch
-    # 得到每个switch
     switch_elems = get_switch(e)
     for switch_elem in switch_elems:
-        # 判断switch是否可以转化
         flag_switch = True
         judge_transform(switch_elem)
         if flag_switch == False:
             continue
-        # 获取每个case
         case_elems = get_case(switch_elem)
-        # 得到switch里的变量
         var = get_variable(switch_elem)[0]
         var[-1].tail = ''
-        # 获得default
         default_elem = get_default(switch_elem)
-        # 对default进行转化
         transform_default(default_elem)
-        # 对每个case进行转化
         transform_case(case_elems, var)
 
         var_index = var.getparent().index(var)
         del var.getparent()[var_index]
 
-        # 获得swich里的所有执行语句，移到switch前面
         block_content = get_block_content(switch_elem)[0]
         block_content.tail = ''
         get_switch_index = switch_elem.getparent().index(switch_elem)
         switch_elem.getparent().insert(get_switch_index, block_content)
-        # 删除switch
         index = switch_elem.getparent().index(switch_elem)
         del switch_elem.getparent()[index]
         flag = True
@@ -175,7 +156,6 @@ def save_tree_to_file(tree,path):
 def count(e):
     count_num = 0
     global flag_switch
-    # 得到每个switch
     switch_elems = get_switch(e)
     for switch_elem in switch_elems:
         flag_switch = True
@@ -185,14 +165,10 @@ def count(e):
     return count_num
 def get_number(xml_path):
     xmlfilepath = os.path.abspath(xml_path)
-    # 解析成树
     e = init_parse(xmlfilepath)
     return count(e)
 def xml_file_path(xml_path):
     global flag
-    # xml_path 需要转化的xml路径
-    # sub_dir_list 每个作者的包名
-    # name_list 具体的xml文件名
     save_xml_file = './transform_xml_file/switch_if'
     transform_java_file = './pre_file/transform_java/switch_if'
     if not os.path.exists(transform_java_file):
@@ -201,12 +177,9 @@ def xml_file_path(xml_path):
         os.mkdir(save_xml_file)
     for xml_path_elem in xml_path:
         xmlfilepath = os.path.abspath(xml_path_elem)
-        # 解析成树
         e = init_parse(xmlfilepath)
-        # 转换
         flag = False
         trans_tree(e)
-        # 保存文件
         if flag == True:
             str = xml_path_elem.split('/')[-1]
             sub_dir = xml_path_elem.split('/')[-2]

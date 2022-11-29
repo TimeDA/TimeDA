@@ -27,12 +27,10 @@ def transform_java_xml(pre_file, xml_file):
     for root, sub_dirs, file in os.walk(pre_file):
         for sub_dir in sub_dirs:
             pre_java = os.path.join(root, sub_dir)
-            # 创建对应作者的xml文件目录
             if not os.path.exists(os.path.join(xml_file, sub_dir)):
                 os.mkdir(os.path.join(xml_file, sub_dir))
             for root1, sub_dirs1, file1 in os.walk(pre_java):
                 for file1_elem in file1:
-                    # 获取文件名字（不带后缀名)
                     name = re.findall(r'(.+?)\.', file1_elem)
                     srcml_java_xml(os.path.join(pre_java, file1_elem), os.path.join(xml_file, sub_dir, name[0]))
                     if flag == False:
@@ -67,60 +65,48 @@ def get_xml(xml_file):
             list_18 = {'18.1': 0, '18.2': 0}
             list_19 = {'19': [0, 0]}
             num_19 = 0
-            # 创建作者文件
             f = open(os.path.join('./author_style', sub_dir + '.txt'), 'w')
             for root1, sub_dirs1, files1 in os.walk(os.path.join(root, sub_dir)):
                 if len(files1)==0:
                     break
-                # 遍历每个xml文件
                 for file1 in files1:
                     # 19
                     num_19 += 1
-                    # 获得每个xml文件路径tuple
                     xml_file_path = os.path.join(root, sub_dir, file1)
-                    # 把作者风格写入每个txt文件
                     print(xml_file_path)
                     style_list = get_style(xml_file_path)
                     #############################################
                     for i in range(3, 19):
                         dict_style = style_list[i]
-                        # 针对类别19
                         if i == 18:
                             for j in range(0, 2):
                                 list_19['19'][j] += dict_style['19'][j]
                             continue
                         for key in dict_style:
                             eval('list_'+str(i+1))[key] += dict_style[key]
-                #
                 list_19['19'][0] = round(list_19['19'][0]/num_19, 1)
                 list_19['19'][1] = round(list_19['19'][1] / num_19, 1)
-                # 计算比例
-                #############################################
+
                 for i in range(3, 18):
                     dict_style = eval('list_' + str(i + 1))
                     sum1 = sum(dict_style.values())
                     for key in dict_style:
                         if sum1 != 0:
-                            # 类别4
                             if key == '4.1' and dict_style[key] > 0:
                                 dict_style[key] = 100.0
                                 dict_style['4.2'] = 0.0
                                 break
-                            # 类别10
                             elif key == '10.1' and dict_style[key] > 0:
                                 dict_style[key] = 100.0
                                 dict_style['10.2'] = 0.0
                                 break
-                            # 类别11
                             elif key == '11.1' and dict_style[key] > 0:
                                 dict_style[key] = 100.0
                                 dict_style['11.2'] = 0.0
                                 break
                             else:
                                 dict_style[key] = round((dict_style[key] / sum1) * 100, 1)
-                print("----------------")
-                print("作者" + sub_dir + "的所有程序所占比例:")
-                #############################################
+
                 for i in range(3, 19):
                     print(eval('list_'+str(i+1)))
             #############################################
@@ -135,8 +121,7 @@ def get_xml(xml_file):
             f.close()
 def get_style(xml_file_path):
     global java_cpp_flag
-    # 风格
-    #############################################
+
     style_list = [0, 0, 0]
     # 1
     doc = eval('transform_1')
@@ -189,11 +174,7 @@ def get_style(xml_file_path):
         style_list.append(doc.get_program_style(xml_file_path))
     return style_list
 if __name__ == '__main__':
-    # 未转化之前的java文件
     pre_file = "pre_file/java_cpp_file"
-    # srcml java/cpp 的XML文件
     xml_file = "./xml_file"
-    # 将java/c文件转化成xml文件
     transform_java_xml(pre_file, xml_file)
-    # 获得作者风格
     get_xml(xml_file)

@@ -155,18 +155,15 @@ def replace_call(func, call_to_replace, new_func_name, selector):
                 argument_list.text = '(' + str(selector) + ')'
 
 def merge_func(parser, src_func, dst_func):
-    #main函数不能合并
     src_func_name = src_func.xpath('src:name', namespaces=ns)[0].text
     dst_func_name = dst_func.xpath('src:name', namespaces=ns)[0].text
     if src_func_name == 'main' or dst_func_name == 'main': return False
 
-    #返回值类型不同不能合并
     src_func_type = ''.join(src_func.xpath('src:type', namespaces=ns)[0].itertext())
     dst_func_type = ''.join(dst_func.xpath('src:type', namespaces=ns)[0].itertext())
     if src_func_type != dst_func_type: return False
 
     print('merging ', src_func_name, dst_func_name)
-    #替换所有原来的函数调用语句
     new_func_name = '_'.join(['merged', src_func_name, dst_func_name])
     #replace_call(parser, src_func_name, new_func_name, 0)
     #replace_call(parser, dst_func_name, new_func_name, 1)
@@ -193,7 +190,6 @@ def merge_func(parser, src_func, dst_func):
     dst_func_args = get_args_and_types(dst_func)
     print(dst_func_args)
 
-    #检查是否有同名不同类型参数
     shorter_list = src_func_args if len(src_func_args) < len(dst_func_args) else dst_func_args
     longer_list = src_func_args if len(src_func_args) >= len(dst_func_args) else dst_func_args
     for arg_name in shorter_list:
@@ -202,7 +198,6 @@ def merge_func(parser, src_func, dst_func):
                 print('Argument conflict! Cannot merge!')
                 return False
 
-    #合并
     new_func.text = src_func_type + ' '
     new_func.text += new_func_name
     new_func.text += '(int selector,'
@@ -266,9 +261,6 @@ def transform_by_line_cnt(src_author, dst_author, save_to='tmp.xml'):
 
 def xml_file_path(xml_path):
     global flag
-    # xml_path 需要转化的xml路径
-    # sub_dir_list 每个作者的包名
-    # name_list 具体的xml文件名
     save_xml_file = './transform_xml_file/merge_function'
     transform_java_file = './pre_file/transform_java/merge_function'
     if not os.path.exists(transform_java_file):
@@ -277,12 +269,9 @@ def xml_file_path(xml_path):
         os.mkdir(save_xml_file)
     for xml_path_elem in xml_path:
             xmlfilepath = os.path.abspath(xml_path_elem)
-            # 解析成树
             e = init_parser(xmlfilepath)
-            # 转换
             flag = False
             transform(e)
-            # 保存文件
             if flag == True:
                 str = xml_path_elem.split('/')[-1]
                 sub_dir = xml_path_elem.split('/')[-2]

@@ -62,18 +62,7 @@ def save_tree_to_file(tree, file):
 	with open(file, 'w') as f:
 		f.write(etree.tostring(tree).decode('utf8'))
 
-#静态内存分配转动态
-#int a[8];
-#int *a = (int *)malloc(sizeof(int) * 8);
-#第一步：获取所有函数
-#第二步：对每个函数，获取其中所有声明语句
-#第三步：对每个声明语句，获取其中的数组下标方括号和初始化部分
-#第四步：判断获取到有方括号且没有初始化部分，否则不合要求
-#第五步：对每个合要求的声明，获取类型名和方括号内的数组长度
-#第六步：构造动态分配声明语句的初始化部分：= malloc(sizeof(类型名) * 数组长度)
-#第七步：把构造的初始化部分追加到方括号后面
-#第八步：在类型名后面加上*
-#第九步：删除方括号
+
 def static_to_dyn(e, ignore_list=[], instances=None):
 	global flag
 	flag = False
@@ -109,9 +98,6 @@ def static_to_dyn(e, ignore_list=[], instances=None):
 
 def xml_file_path(xml_path):
 	global flag
-	# xml_path 需要转化的xml路径
-	# sub_dir_list 每个作者的包名
-	# name_list 具体的xml文件名
 	save_xml_file = './transform_xml_file/static_dyn_mem'
 	transform_java_file = './pre_file/transform_java/static_dyn_mem'
 	if not os.path.exists(transform_java_file):
@@ -120,12 +106,9 @@ def xml_file_path(xml_path):
 		os.mkdir(save_xml_file)
 	for xml_path_elem in xml_path:
 			xmlfilepath = os.path.abspath(xml_path_elem)
-			# 解析成树
 			e = init_parser(xmlfilepath)
-			# 转换
 			flag = False
 			static_to_dyn(e)
-			# 保存文件
 			if flag == True:
 				str = xml_path_elem.split('/')[-1]
 				sub_dir = xml_path_elem.split('/')[-2]

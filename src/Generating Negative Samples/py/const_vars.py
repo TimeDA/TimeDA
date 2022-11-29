@@ -4,8 +4,8 @@ from lxml.etree import Element
 from copy import deepcopy
 
 
-path='.\\consts'#特征作者提取xml文件库
-d_path='.\\des_con'#替换目标作者xml文件库
+path='.\\consts'
+d_path='.\\des_con'
 
 from lxml import etree
 doc=None
@@ -13,10 +13,10 @@ ns = {'src': 'http://www.srcML.org/srcML/src',
    'cpp': 'http://www.srcML.org/srcML/cpp',
    'pos': 'http://www.srcML.org/srcML/position'}
 
-ls=[] #作者风格记录
-des_ls=[]#转换目标程序风格记录
+ls=[] 
+des_ls=[]
 
-def_Min=1 #设定宏定义阈值
+def_Min=1
 
 def init_parse(file):
     global doc
@@ -38,25 +38,7 @@ def save_file(doc, f):
     with open(f,'w')as r:
         r.write(etree.tostring(doc).decode('utf-8'))
 
-
-# def trans_define(e,l,f):
-#     #获得所有的宏定义标签
-#     consts=get_consts(e)
-#     #首先排除已存在的相同define标签
-#     for const in consts:
-#         for i in range(len(const)):
-#             if const[i][1].text==l[1]:
-#                 return
-#
-#     #获得所有的name标签 只要name和宏定义的0name相同则替换宏定义中的值
-#
-#     elem=e('//src:using')[0]
-#     des=elem.getparent().index(elem)
-#     elem.getparent().insert(des+1,l[2])
-#     save_file(doc, f)
-
 def creat_def_list(e,cons_ls):
-    #获取define标签
     consts=get_consts(e)
     flag=0
     for const in consts:
@@ -95,15 +77,13 @@ def change_var_name(var_a, var_b, des_e,program_path):
     save_file(doc, program_path)
 
 def program_transform(program_path,author_path,ignore_list=[]):
-    ls = []  # 作者风格记录
-    des_ls = []  # 转换目标程序风格记录
+    ls = []  
+    des_ls = [] 
 
     global flag
     files = [f for f in glob.glob(author_path + "**/*.xml", recursive=True)]
     for f in files:
-        #对一个文件列表循环解析
         e = init_parse(f)
-        #每循环一个文件记录其中的宏定义
         creat_def_list(e,ls)
     des_e = init_parse(program_path)
     creat_def_list(des_e,des_ls)

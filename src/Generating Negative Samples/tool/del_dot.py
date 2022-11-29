@@ -1,6 +1,6 @@
 import os
 import subprocess
-root_path='./test'#test里边是放作者目录的   只要改这里可以将test下边所有的作者以及作者下边的文件都去掉点
+root_path='./test'
 
 def cmd(command):
     print(command)

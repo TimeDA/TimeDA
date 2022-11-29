@@ -134,7 +134,6 @@ def full_incr_to_incr(opr, expr, pre_or_post):
 	if expr[0].text is not None and expr[-1].text == '1':
 		if operator == '+':
 			del expr[1:]
-			# 给新创建的结点添加内容text，内容为++
 			if pre_or_post == 1:
 				if expr.tail is not None:
 					expr.tail = '++' + expr.tail
@@ -142,7 +141,6 @@ def full_incr_to_incr(opr, expr, pre_or_post):
 					expr.tail = '++'
 			else:
 				expr[0].text = '++' + expr[0].text
-		# 如果是i=i-1
 		elif operator == '-':
 			del expr[1:]
 			if pre_or_post == 1:
@@ -162,21 +160,11 @@ def incr_to_full_incr(opr, expr, pre_or_post):
 	if expr[int(not pre_or_post)].text is None: return
 	if operator == '++':
 		del expr[pre_or_post]
-		# 给新创建的结点3添加内容text，内容为+
 		expr[0].text = var_name + ' = ' + var_name + ' + 1'
-	# 如果是i--
 	elif operator == '--':
 		del expr[pre_or_post]
 		expr[0].text = var_name + ' = ' + var_name + ' - 1'
 
-#自增自减运算符的使用
-#i++/i+=1/i=i+1
-#第一步：获取所有表达式语句
-#第二步：从中选出只含一个表达式的语句
-#第三步：对每个这样的语句，获取其中的运算符
-#第四步：判断句中是否只有一个运算符，不是则不符合条件
-#第五步：判断该运算符是否为++或--，不是则不符合条件
-#第六步：假设为++，则删除该运算符并在表达式后面加上+=1;
 def transform_standalone_stmts(e):
 	global flag
 	for expr, style in get_incr_exprs(e, 1):
@@ -196,9 +184,6 @@ def transform_for_loops(e):
 
 def xml_file_path(xml_path):
 	global flag
-	# xml_path 需要转化的xml路径
-	# sub_dir_list 每个作者的包名
-	# name_list 具体的xml文件名
 	save_xml_file = './transform_xml_file/incr_opr_usage'
 	transform_java_file = './pre_file/transform_java/incr_opr_usage'
 	if not os.path.exists(transform_java_file):
@@ -207,12 +192,9 @@ def xml_file_path(xml_path):
 		os.mkdir(save_xml_file)
 	for xml_path_elem in xml_path:
 			xmlfilepath = os.path.abspath(xml_path_elem)
-			# 解析成树
 			e = init_parser(xmlfilepath)
-			# 转换
 			flag = False
 			transform_standalone_stmts(e)
-			# 保存文件
 			if flag == True:
 				str = xml_path_elem.split('/')[-1]
 				sub_dir = xml_path_elem.split('/')[-2]
@@ -224,6 +206,4 @@ def xml_file_path(xml_path):
 if __name__ == '__main__':
 	e = init_parser(sys.argv[1])
 	transform_standalone_stmts(e)
-	#transform_for_loops(e)
-	#print(get_program_style(e))
 	save_tree_to_file(doc, './incr_opr.xml')

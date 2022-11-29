@@ -41,13 +41,6 @@ def get_multi_decl_stmts(e):
 			multi_decl_stmts.append(decl_stmt)
 	return multi_decl_stmts
 
-#多个同类型变量声明方式
-#int i, j;
-#int i; int j;
-#第一步：获取所有一条语句中声明了多个变量的声明语句
-#第二步：对每个这样的语句，获取其类型名
-#第三步：遍历语句的子节点，如果该节点是逗号，改成分号+类型名+空格
-
 def transform_standalone_stmts(e, ignore_list=[], instances=None):
 	global flag
 	flag = False
@@ -86,9 +79,6 @@ def transform_standalone_stmts(e, ignore_list=[], instances=None):
 
 def xml_file_path(xml_path):
 	global flag
-	# xml_path 需要转化的xml路径
-	# sub_dir_list 每个作者的包名
-	# name_list 具体的xml文件名
 	save_xml_file = './transform_xml_file/var_init_split'
 	transform_java_file = './pre_file/transform_java/var_init_split'
 	if not os.path.exists(transform_java_file):
@@ -97,12 +87,9 @@ def xml_file_path(xml_path):
 		os.mkdir(save_xml_file)
 	for xml_path_elem in xml_path:
 			xmlfilepath = os.path.abspath(xml_path_elem)
-			# 解析成树
 			e = init_parser(xmlfilepath)
-			# 转换
 			flag = False
 			transform_standalone_stmts(e)
-			# 保存文件
 			if flag == True:
 				str = xml_path_elem.split('/')[-1]
 				sub_dir = xml_path_elem.split('/')[-2]

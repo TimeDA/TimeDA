@@ -625,7 +625,6 @@ def transform_by_nesting_level(src_author, dst_author, ignore_list=[], srccode_p
             func_len = get_elem_len(func)
             func_name = func.xpath('src:name', namespaces=ns)[0].text
             if func_name.startswith('split_') or func_name.startswith('merged_'):
-                #print('变换过，忽略')
                 continue
             level = 0
             block_content = func.xpath('src:block/src:block_content', namespaces=ns)[0]
@@ -663,9 +662,6 @@ def transform_by_nesting_level(src_author, dst_author, ignore_list=[], srccode_p
 
 def xml_file_path(xml_path):
     global flag
-    # xml_path 需要转化的xml路径
-    # sub_dir_list 每个作者的包名
-    # name_list 具体的xml文件名
     save_xml_file = './transform_xml_file/static_dyn_mem'
     transform_java_file = './pre_file/transform_java/static_dyn_mem'
     if not os.path.exists(transform_java_file):
@@ -674,12 +670,9 @@ def xml_file_path(xml_path):
         os.mkdir(save_xml_file)
     for xml_path_elem in xml_path:
             xmlfilepath = os.path.abspath(xml_path_elem)
-            # 解析成树
             e = init_parser(xmlfilepath)
-            # 转换
             flag = False
             static_to_dyn(e)
-            # 保存文件
             if flag == True:
                 str = xml_path_elem.split('/')[-1]
                 sub_dir = xml_path_elem.split('/')[-2]

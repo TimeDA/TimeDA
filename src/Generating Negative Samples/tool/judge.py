@@ -1,4 +1,3 @@
-# 判断两个节点是否完全相等（包括节点内部）
 
 temp = True
 def judge(root1, root2):

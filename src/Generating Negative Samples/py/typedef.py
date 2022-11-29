@@ -35,9 +35,8 @@ def get_instances(e):
     names=get_allname(e)
     for define in defines:
         if len(define)<=1:continue
-        #获取定义类型不是struct的
         if define[0][0].tag != '{http://www.srcML.org/srcML/src}struct' and define[0][0].tag != '{http://www.srcML.org/srcML/src}union' and define[0][0].tag != '{http://www.srcML.org/srcML/src}enum':
-            define_name=define[1].text  #获取typedef的名字
+            define_name=define[1].text  
 
             name_replace = ''.join(define[0].itertext())
             for name in names:
@@ -107,12 +106,11 @@ def get_style(xml_path):
     num = False
     for define in defines:
         if len(define)<=1:continue
-        # 获取定义类型不是struct的
         if len(define[0][0]) == 0 and define[0][0].tag != '{http://www.srcML.org/srcML/src}struct' and define[0][0].tag != '{http://www.srcML.org/srcML/src}union' and define[0][0].tag != '{http://www.srcML.org/srcML/src}enum':
-            define_name = define[1].text  # 获取typedef的名字
+            define_name = define[1].text  
             name_replace = ''
             for part_name in define[0]:
-                name_replace = name_replace + " " + str(part_name.text)  # 直接累加名字拼凑成字符串
+                name_replace = name_replace + " " + str(part_name.text)
             num = True
     return num
 def xml_file_path(xml_path):
@@ -124,7 +122,6 @@ def xml_file_path(xml_path):
 
     for xml_path_elem in xml_path:
         xmlfilepath = os.path.abspath(xml_path_elem)
-        # 解析成树
         e = init_parse(xmlfilepath)
         flag = False
         trans_define(e)

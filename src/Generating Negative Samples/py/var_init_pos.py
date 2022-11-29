@@ -50,22 +50,10 @@ def get_decl_init_stmts(e):
 				if 'const' in type_text: continue
 			if len(init) == 0: continue
 			var_name = init[0].getprevious().text
-			#跳过数组的初始化
 			if var_name == None: continue
 			decl_init_stmts.append((decl_stmt, decl, 0, 0))
 	return decl_init_stmts
 
-#变量初始化位置
-#int a = 1;
-#int a; a = 1;
-#第一步：获取所有声明语句
-#第二步：对每个声明语句，获取其中初始化部分
-#第三步：如果没有初始化部分则不合要求（目前只有单向变换）
-#第四步：获取声明的变量名
-#第五步：如果是数组声明则不合要求
-#第六步：构造新的赋值语句：变量名+初始化部分
-#第七步：把构造的赋值语句插入到原来声明语句之后
-#第八步：删除原来声明里的初始化部分
 def transform_standalone_stmts(e, instances=None, ignore_list=[]):
 	global flag
 	flag = False
@@ -78,12 +66,9 @@ def transform_standalone_stmts(e, instances=None, ignore_list=[]):
 			decl = item[1]
 			stmt_prev = decl_stmt.getprevious()
 			stmt_prev = stmt_prev if stmt_prev is not None else decl_stmt
-			#取路径，看路径是否在传进来的忽略列表里
 			stmt_prev_path = tree_root.getpath(stmt_prev)
 			if stmt_prev_path in ignore_list:
-				#print('变换过，忽略')
 				continue
-			#变换
 			init = get_init(decl)
 			if '{' in ''.join(init[0].itertext()): continue
 			flag = True
@@ -103,9 +88,6 @@ def transform_standalone_stmts(e, instances=None, ignore_list=[]):
 
 def xml_file_path(xml_path):
 	global flag
-	# xml_path 需要转化的xml路径
-	# sub_dir_list 每个作者的包名
-	# name_list 具体的xml文件名
 	save_xml_file = './transform_xml_file/var_init_pos'
 	transform_java_file = './pre_file/transform_java/var_init_pos'
 	if not os.path.exists(transform_java_file):
@@ -114,12 +96,9 @@ def xml_file_path(xml_path):
 		os.mkdir(save_xml_file)
 	for xml_path_elem in xml_path:
 			xmlfilepath = os.path.abspath(xml_path_elem)
-			# 解析成树
 			e = init_parser(xmlfilepath)
-			# 转换
 			flag = False
 			transform_standalone_stmts(e)
-			# 保存文件
 			if flag == True:
 				str = xml_path_elem.split('/')[-1]
 				sub_dir = xml_path_elem.split('/')[-2]

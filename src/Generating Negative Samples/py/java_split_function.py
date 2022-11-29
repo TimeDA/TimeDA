@@ -45,7 +45,7 @@ def get_vars_and_types(func):
     vars = {}
     decl_stmts = func.xpath('//src:decl_stmt', namespaces=ns)
     for decl_stmt in decl_stmts:
-        decl_type = ''.join(decl_stmt.xpath('src:decl/src:type', namespaces=ns)[0].itertext())  # 在这修改类型
+        decl_type = ''.join(decl_stmt.xpath('src:decl/src:type', namespaces=ns)[0].itertext()) 
         for decl in decl_stmt.xpath('src:decl', namespaces=ns):
             decl_name = ''.join(decl.xpath('src:name', namespaces=ns)[0].itertext())
             vars[decl_name] = decl_type
@@ -74,7 +74,7 @@ def get_tmp_vars_and_types(func):
         decl_type = ''.join(typename[0].itertext())
         if '[' not in decl_name:
             vars[decl_name] = decl_type
-        else:  # 数组类型
+        else:  
             decl_name = decl_name.split('[')[0]
             vars[decl_name] = decl_type + '[]'
     for_inits = func.xpath('.//src:function/src:block//src:init/src:decl', namespaces=ns)
@@ -86,7 +86,7 @@ def get_tmp_vars_and_types(func):
         decl_type = ''.join(typename[0].itertext())
         if '[' not in decl_name:
             vars[decl_name] = decl_type
-        else:  # 数组类型
+        else:  
             decl_name = decl_name.split('[')[0]
             vars[decl_name] = decl_type + '[]'
     return vars
@@ -225,10 +225,10 @@ def split_func(xml_file, c_file, func_name, line_start, line_end, new_file):
     e = init_parser(xml_file)
     f = open(c_file, 'rb')
     newf = open(new_file, 'wb')
-    func = get_function(e, func_name)  # 找到函数
+    func = get_function(e, func_name)  
     vars = get_vars_and_types(func)
-    vars.update(get_tmp_vars_and_types(func))  # 不知道干什么用的 还有错误等翔改完
-    charge_vars_list = []  # 存放需要改变的变量值
+    vars.update(get_tmp_vars_and_types(func))  
+    charge_vars_list = [] 
     vars_pos = []
     vars_lines = set()
     new_vars = {}
@@ -273,7 +273,6 @@ def split_func(xml_file, c_file, func_name, line_start, line_end, new_file):
                     vars_pos.append(pos_str)
                     vars_lines.add(pos_start.split(':')[0])
             elif tag.localname == 'return':
-                # 跳过return语句
                 lines_to_skip.append(curr_line)
                 continue
             # pos_end = elem.xpath('@pos:end', namespaces=ns)[0]
@@ -322,7 +321,7 @@ def split_func(xml_file, c_file, func_name, line_start, line_end, new_file):
                     pos_end = int(item.split(',')[1].split(':')[1])
                     new_func = identity_copy_charwise(f, new_func, line_pos, pos_start - 1)
                     line_pos = pos_end + 1
-                    new_func += name.encode('utf8') + b'.val'  # 修改函数里头变量
+                    new_func += name.encode('utf8') + b'.val'
                     f.read(len(name))
             new_func = identity_copy_charwise(f, new_func, pos_end)
     new_func += b'}\n'
@@ -334,7 +333,7 @@ def split_func(xml_file, c_file, func_name, line_start, line_end, new_file):
     func_index = func.getparent().index(func)
 
     for var in charge_vars_list:
-        charge_var(var[0], var[1], e)  # 第一个参数是变量类型  第二个参数是变量名
+        charge_var(var[0], var[1], e) 
     func.getparent().insert(func_index, new_func_node)
 
     f.close()
@@ -437,7 +436,6 @@ def transform_by_line_cnt(src_author, dst_author, ignore_list=[], srccode_path=N
             func_len = get_elem_len(func)
             func_name = func.xpath('src:name', namespaces=ns)[0].text
             if func_name.startswith('split_') or func_name.startswith('merged_'):
-                # print('变换过，忽略')
                 continue
             if func_len - 5 <= dst_avg_func_len: continue
             len_diff = func_len - dst_avg_func_len
@@ -456,8 +454,6 @@ def transform_by_line_cnt(src_author, dst_author, ignore_list=[], srccode_path=N
             java_file = srccode_path if srccode_path is not None else filename.replace('.xml', '.java')
             new_func_path = split_func(filename, java_file, func_name, start_elem_line_start, end_elem_line_end,
                                        'new.java')
-
-            ##修改变量值和类型
 
         save_tree_to_file(doc, save_to)
     return flag, tree_root, new_ignore_list
@@ -528,7 +524,6 @@ def transform_by_nesting_level(src_author, dst_author, ignore_list=[], srccode_p
             func_len = get_elem_len(func)
             func_name = func.xpath('src:name', namespaces=ns)[0].text
             if func_name.startswith('split_') or func_name.startswith('merged_'):
-                # print('变换过，忽略')
                 continue
             level = 0
             block_content = func.xpath('src:block/src:block_content', namespaces=ns)[0]
@@ -565,9 +560,7 @@ def transform_by_nesting_level(src_author, dst_author, ignore_list=[], srccode_p
 
 def xml_file_path(xml_path):
     global flag
-    # xml_path 需要转化的xml路径
-    # sub_dir_list 每个作者的包名
-    # name_list 具体的xml文件名
+
     save_xml_file = './transform_xml_file/static_dyn_mem'
     transform_java_file = './pre_file/transform_java/static_dyn_mem'
     if not os.path.exists(transform_java_file):
@@ -576,12 +569,9 @@ def xml_file_path(xml_path):
         os.mkdir(save_xml_file)
     for xml_path_elem in xml_path:
         xmlfilepath = os.path.abspath(xml_path_elem)
-        # 解析成树
         e = init_parser(xmlfilepath)
-        # 转换
         flag = False
         static_to_dyn(e)
-        # 保存文件
         if flag == True:
             str = xml_path_elem.split('/')[-1]
             sub_dir = xml_path_elem.split('/')[-2]

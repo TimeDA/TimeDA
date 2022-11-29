@@ -22,6 +22,6 @@ def line_cout(path):
         f.write(str(round(sum_lines/len(sub_dirs), 1))+'\n')
         break
 if __name__ == '__main__':
-    path1 = './gcj数据集修改后的'
+    path1 = './gcj'
     path2 = './40authors'
     line_cout(path1)

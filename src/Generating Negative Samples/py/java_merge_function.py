@@ -78,14 +78,14 @@ def count_func_avg_len_by_author(author):
     total_sum = 0
     file_cnt = 0
     file_list = os.listdir(author) if os.path.isdir(author) else [author]
-    for file in file_list:#循环遍历作者目录
-        per_file_sum = 0  #记录函数总共行数？
+    for file in file_list:
+        per_file_sum = 0  
         if not file.endswith('.xml'): continue
         file_cnt += 1
         filename = os.path.join(author, file)
         #print(filename)
         p = init_parser(filename)
-        funcs = get_functions(p)                                   #获取所有function标签
+        funcs = get_functions(p)         
         for func in funcs:
             pos_start = func.xpath('@pos:start', namespaces=ns)[0]
             pos_end = func.xpath('@pos:end', namespaces=ns)[0]
@@ -154,18 +154,14 @@ def replace_call(func, call_to_replace, new_func_name, selector,avgs):
                 argument_list.text = '(' + str(selector) + ')'
 
 def merge_func(parser, src_func, dst_func):
-    #main函数不能合并
     src_func_name = src_func.xpath('src:name', namespaces=ns)[0].text
     dst_func_name = dst_func.xpath('src:name', namespaces=ns)[0].text
     if src_func_name == 'main' or dst_func_name == 'main': return False
 
-    #返回值类型不同不能合并
     src_func_type = ''.join(src_func.xpath('src:type', namespaces=ns)[0].itertext())
     dst_func_type = ''.join(dst_func.xpath('src:type', namespaces=ns)[0].itertext())
     if src_func_type != dst_func_type: return False
 
-    #print('merging ', src_func_name, dst_func_name)
-    #替换所有原来的函数调用语句
     new_func_name = '_'.join(['merged', src_func_name, dst_func_name])
 
     new_func = etree.Element('function')
@@ -187,22 +183,17 @@ def merge_func(parser, src_func, dst_func):
     if_stmt.append(else_branch)
 
     src_func_args = get_args_and_types(src_func)
-    #print(src_func_args)  #获得参数名：类型 以字典表示
     dst_func_args = get_args_and_types(dst_func)
-    #print(dst_func_args)  #获得参数名：类型 以字典表示
     replace_call(parser, src_func_name, new_func_name, 0,src_func_args)
     replace_call(parser, dst_func_name, new_func_name, 1,dst_func_args)
 
-    #检查是否有同名不同类型参数
     shorter_list = src_func_args if len(src_func_args) < len(dst_func_args) else dst_func_args
     longer_list = src_func_args if len(src_func_args) >= len(dst_func_args) else dst_func_args
     for arg_name in shorter_list:
         if arg_name in longer_list:
             if longer_list[arg_name] != shorter_list[arg_name]:
-                #print('Argument conflict! Cannot merge!')    #名字相同类型不同
+                #print('Argument conflict! Cannot merge!')
                 return False
-
-    #合并
     new_func.text = src_func_type + ' '
     new_func.text += new_func_name
     new_func.text += '(int selector,'
@@ -218,18 +209,12 @@ def merge_func(parser, src_func, dst_func):
     src_func.getparent().remove(src_func)
 
     return True
-    #print(''.join(new_func.itertext()))
-    #print('==================')
+
 
 def transform_by_line_cnt(src_author, dst_author, save_to='tmp.xml'):
     #src_avg_func_len = count_func_avg_len_by_author(src_author)
-    dst_avg_func_len = count_func_avg_len_by_author(dst_author)  #记录目标作者函数的平均长度
-    #print('Src author function avg len:', src_avg_func_len)
-    #print('Dst author function avg len:', dst_avg_func_len)
-    #if dst_avg_func_len - 5 <= src_avg_func_len:
-    #    print('Authors have similar function lengths, or source author has longer functions than the target. No need to split!')
-    #    return
-    file_list = os.listdir(src_author) if os.path.isdir(src_author) else [src_author]  #原作者
+    dst_avg_func_len = count_func_avg_len_by_author(dst_author)  
+    file_list = os.listdir(src_author) if os.path.isdir(src_author) else [src_author]
     for file in file_list:
         if not file.endswith('.xml'): continue
         filename = os.path.join(src_author, file)
@@ -240,9 +225,9 @@ def transform_by_line_cnt(src_author, dst_author, save_to='tmp.xml'):
         for func in funcs:
             func_len = get_elem_len(func)
             func_name = func.xpath('src:name', namespaces=ns)[0].text
-            other_funcs.append((func, func_len))  #存函数节点和函数长度
+            other_funcs.append((func, func_len)) 
             if func_len < dst_avg_func_len:
-                short_funcs.append((func, func_len))  #比目标作者平均函数长度还短的函数节点以及距离
+                short_funcs.append((func, func_len))
 
         merged_funcs = []
         for short_func, short_func_len in short_funcs:
@@ -264,9 +249,6 @@ def transform_by_line_cnt(src_author, dst_author, save_to='tmp.xml'):
 
 def xml_file_path(xml_path):
     global flag
-    # xml_path 需要转化的xml路径
-    # sub_dir_list 每个作者的包名
-    # name_list 具体的xml文件名
     save_xml_file = './transform_xml_file/merge_function'
     transform_java_file = './pre_file/transform_java/merge_function'
     if not os.path.exists(transform_java_file):
@@ -275,12 +257,10 @@ def xml_file_path(xml_path):
         os.mkdir(save_xml_file)
     for xml_path_elem in xml_path:
             xmlfilepath = os.path.abspath(xml_path_elem)
-            # 解析成树
+
             e = init_parser(xmlfilepath)
-            # 转换
             flag = False
             transform(e)
-            # 保存文件
             if flag == True:
                 str = xml_path_elem.split('/')[-1]
                 sub_dir = xml_path_elem.split('/')[-2]

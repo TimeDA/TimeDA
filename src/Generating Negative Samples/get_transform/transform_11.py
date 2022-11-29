@@ -15,14 +15,12 @@ def transform(prog_fullpath, target_author, orig_prog_path, save_to, ignore_list
     authors_root = os.path.dirname(target_author)
     randnum = random.randint(0, len(os.listdir(authors_root)))
     if randnum == 0:
-        #11.1转11.2
         e = type_define.init_parse(prog_fullpath)
         flag, doc, new_ignore_list = type_define.trans_define(e, ignore_list)
         if flag:
             per_tf_ignore_list = new_ignore_list
             type_define.save_file(doc, save_to)
     else:
-        #11.2转11.1
         flag, doc, new_ignore_list = type11_def.program_transform(prog_fullpath, target_author, ignore_list)
         if flag:
             per_tf_ignore_list = new_ignore_list

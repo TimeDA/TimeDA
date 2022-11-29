@@ -15,7 +15,6 @@ def get_pxpr(e):
 def trans_tree(e, ignore_list=[], instances=None):
     global flag
     flag = False
-    # 得到所有的expr
     expr_elems = [get_pxpr(e) if instances is None else (instance[0] for instance in instances)]
     tree_root = e('/*')[0].getroottree()
     new_ignore_list = []
@@ -28,9 +27,6 @@ def trans_tree(e, ignore_list=[], instances=None):
             expr_elem_prev_path = tree_root.getpath(expr_elem_prev)
             if expr_elem_prev_path in ignore_list:
                 continue
-
-            # 对expr循环，查找name,operator,operator,name
-            # temp = ++i;
             if len(expr_elem) >= 4:
                 tag = etree.QName(expr_elem.getparent())
                 if tag.localname == 'condition':
@@ -96,11 +92,8 @@ def save_tree_to_file(tree, path):
 
 def count(e):
     count_num = 0
-    # 得到所有的expr
     expr_elems = get_pxpr(e)
     for expr_elem in expr_elems:
-        # 对expr循环，查找name,operator,operator,name
-        # temp = ++i;
         if len(expr_elem) >= 4:
             tag = etree.QName(expr_elem.getparent())
             if tag.localname == 'condition':
@@ -131,14 +124,10 @@ def count(e):
     return count_num
 def get_number(xml_path):
     xmlfilepath = os.path.abspath(xml_path)
-    # 解析成树
     e = init_parse(xmlfilepath)
     return count(e)
 def xml_file_path(xml_path):
     global flag
-    # xml_path 需要转化的xml路径
-    # sub_dir_list 每个作者的包名
-    # name_list 具体的xml文件名
     save_xml_file = './transform_xml_file/assign_value'
     transform_java_file = './pre_file/transform_java/assign_value'
     if not os.path.exists(transform_java_file):
@@ -147,12 +136,9 @@ def xml_file_path(xml_path):
         os.mkdir(save_xml_file)
     for xml_path_elem in xml_path:
         xmlfilepath = os.path.abspath(xml_path_elem)
-        # 解析成树
         e = init_parse(xmlfilepath)
-        # 转换
         flag = False
         trans_tree(e)
-        # 保存文件
         if flag == True:
             str = xml_path_elem.split('/')[-1]
             sub_dir = xml_path_elem.split('/')[-2]

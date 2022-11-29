@@ -1,5 +1,5 @@
 import sys
-import os               #加上
+import os 
 from lxml import etree
 
 ns = {'src': 'http://www.srcML.org/srcML/src',
@@ -16,8 +16,6 @@ def init_parser(file):
 		e.register_namespace(k, v)
 	return e
 
-
-# 找到所要找的语句的标签
 def get_expr(elem):
 	return elem.xpath('src:expr', namespaces=ns)
 
@@ -74,7 +72,6 @@ def judge_and_append(decl_stmt, next_stmt, decl_name, decl_elem, separate_inits)
 
 def get_separate_inits(e):
 	separate_inits = []
-	#所有含expr标签的放入expr_elems列表中
 	func_elems = get_funcs(e)
 	for func_elem in func_elems:
 		decl_elems = get_decl(func_elem)
@@ -95,9 +92,7 @@ def get_separate_inits(e):
 
 def xml_file_path(xml_path):
 	global flag
-	# xml_path 需要转化的xml路径
-	# sub_dir_list 每个作者的包名
-	# name_list 具体的xml文件名
+
 	save_xml_file = './transform_xml_file/var_init_merge'
 	transform_java_file = './pre_file/transform_java/var_init_merge'
 	if not os.path.exists(transform_java_file):
@@ -106,12 +101,9 @@ def xml_file_path(xml_path):
 		os.mkdir(save_xml_file)
 	for xml_path_elem in xml_path:
 			xmlfilepath = os.path.abspath(xml_path_elem)
-			# 解析成树
 			e = init_parser(xmlfilepath)
-			# 转换
 			flag = False
 			transform_init(e)
-			# 保存文件
 			if flag == True:
 				str = xml_path_elem.split('/')[-1]
 				sub_dir = xml_path_elem.split('/')[-2]
@@ -121,12 +113,9 @@ def xml_file_path(xml_path):
 	return save_xml_file, transform_java_file
 
 if __name__ == '__main__':
-	#xml文件解析成树,写上要传入的xml文件
-	#..表示当前目录的根目录
 	xmlfile = os.path.abspath(sys.argv[1])
 	e = init_parser(xmlfile)
 	transform_init(e)
-	#树存为xml文件，转换后的xml文件名称
 	save_tree_to_file(doc, 'aaa.xml')
 def program_transform(program_path):
 	e = init_parser(program_path)

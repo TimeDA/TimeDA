@@ -203,7 +203,6 @@ def expr_stmt_transfrom(expr_elem, tree_root, expr_elem_stmt_prev_path, new_igno
                                     new_ignore_list.append(expr_elem_stmt_prev_path)
     return flag, tree_root, new_ignore_list
 def trans_tree(e, ignore_list=[], instances=None):
-    # 得到所有的expr
     tree_root = e('/*')[0].getroottree()
     new_ignore_list = []
 
@@ -369,14 +368,10 @@ def count(e):
         return count_num
 def get_number(xml_path):
         xmlfilepath = os.path.abspath(xml_path)
-        # 解析成树
         e = init_parse(xmlfilepath)
         return count(e)
 def xml_file_path(xml_path):
     global flag
-    # xml_path 需要转化的xml路径
-    # sub_dir_list 每个作者的包名
-    # name_list 具体的xml文件名
     save_xml_file = './transform_xml_file/assign_combine'
     transform_java_file = './pre_file/transform_java/assign_combine'
     if not os.path.exists(transform_java_file):
@@ -385,12 +380,9 @@ def xml_file_path(xml_path):
         os.mkdir(save_xml_file)
     for xml_path_elem in xml_path:
         xmlfilepath = os.path.abspath(xml_path_elem)
-        # 解析成树
         e = init_parse(xmlfilepath)
-        # 转换
         flag = False
         trans_tree(e)
-        # 保存文件
         if flag == True:
             str = xml_path_elem.split('/')[-1]
             sub_dir = xml_path_elem.split('/')[-2]

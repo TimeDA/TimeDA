@@ -124,7 +124,7 @@ def get_tmp_vars_and_types(func):
 		typename = get_typename(decl)
 		if typename is None or len(typename) == 0: continue
 		decl_type = ''.join(typename[0].itertext())
-		if '[' in decl_name: #数组类型
+		if '[' in decl_name: 
 			decl_name = decl_name.split('[')[0].strip()
 			decl_type += '[]'
 		vars[decl_name] = vars.get(decl_name, 0) + 1
@@ -136,7 +136,7 @@ def get_tmp_vars_and_types(func):
 		typename = get_typename(init)
 		if typename is None or len(typename) == 0: continue
 		decl_type = ''.join(typename[0].itertext())
-		if '[' in decl_name: #数组类型
+		if '[' in decl_name: 
 			decl_name = decl_name.split('[')[0].strip()
 			decl_type += '[]'
 		vars[decl_name] = vars.get(decl_name, 0) + 1
@@ -151,7 +151,7 @@ def get_tmp_vars_and_types(func):
 		name = init.xpath('src:argument_list/src:argument/src:expr/src:name', namespaces=ns)
 		if len(name) == 0: continue
 		decl_name = ''.join(name[0].itertext())
-		if '[' in decl_name: #数组类型
+		if '[' in decl_name: 
 			decl_name = decl_name.split('[')[0].strip()
 			decl_type += '[]'
 		vars[decl_name] = vars.get(decl_name, 0) + 1
@@ -172,7 +172,7 @@ def get_vars_and_types(func):
 		if '[' not in decl_name:
 			vars[decl_name] = vars.get(decl_name, 0) + 1
 			vars_type[decl_name] = decl_type
-		else: #数组类型
+		else: 
 			decl_name = decl_name.split('[')[0].strip()
 			decl_type += '[]'
 			vars[decl_name] = vars.get(decl_name, 0) + 1
@@ -185,7 +185,7 @@ def get_vars_and_types(func):
 		name = init.xpath('src:argument_list/src:argument/src:expr/src:name', namespaces=ns)
 		if len(name) == 0: continue
 		decl_name = ''.join(name[0].itertext())
-		if '[' in decl_name: #数组类型
+		if '[' in decl_name: 
 			decl_name = decl_name.split('[')[0].strip()
 			decl_type += '[]'
 		vars[decl_name] = vars.get(decl_name, 0) + 1
@@ -204,7 +204,7 @@ def get_vars_and_types(func):
 		name = struct.xpath('src:name', namespaces=ns)
 		if len(name) == 0: continue
 		decl_name = ''.join(name[0].itertext())
-		if '[' in decl_name: #数组类型
+		if '[' in decl_name: 
 			decl_name = decl_name.split('[')[0].strip()
 			decl_type += '[]'
 		vars[decl_name] = vars.get(decl_name, 0) + 1
@@ -223,7 +223,7 @@ def get_template_names(func):
 		name = template.xpath('src:name', namespaces=ns)
 		if len(name) == 0: continue
 		decl_name = ''.join(name[0].itertext())
-		if '[' in decl_name: #数组类型
+		if '[' in decl_name: 
 			decl_name = decl_name.split('[')[0]
 			decl_type += '[]'
 		vars[decl_name] = vars.get(decl_name, 0) + 1
@@ -272,8 +272,7 @@ def replace_names(src_author_file, src_vars_cnt, src_vars_info, dst_vars_cnt, ds
 	dst_vars_list = [k for k in dst_vars_cnt]
 	for src_name, src_cnt in src_vars_cnt:
 		dst_name = ''
-		if src_name in ignore_list: #不能变换已变换过的
-			#print('变换过，忽略')
+		if src_name in ignore_list: 
 			continue
 		# src_name_info = src_vars_info.get(src_name, None)
 		# if src_name_info is None:
@@ -289,8 +288,7 @@ def replace_names(src_author_file, src_vars_cnt, src_vars_info, dst_vars_cnt, ds
 			break
 		if dst_name == '':
 			continue
-		#if i >= len(src_vars_cnt): break
-		#不能替换的变量名列表，这些名字有特殊含义
+
 		whitelist = ['main', 'size', 'operator', 'map', 'count', 'left', 'end',
 		 'index', 'length', 'test', 'swap', 'time', 'min', 'max', 'exp', 'log',
 		 'less', 'j1', 'y0', 'y1', 'free', 'right', 'pow', 'div', '__attribute__',

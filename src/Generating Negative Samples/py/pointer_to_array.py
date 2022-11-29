@@ -25,7 +25,6 @@ def save_tree_to_file(tree, file):
     with open(file, 'w') as f:
         f.write(etree.tostring(tree).decode('utf8'))
 
-# 指针转换成数组 *(a+i) 转换成 a[i]
 def transform(e,ignore_list=[], instances=None):
     global flag
     flag = False
@@ -44,7 +43,6 @@ def transform(e,ignore_list=[], instances=None):
                 expr_elem[3].text = '['
                 expr_elem[5].text = ']'
                 del expr_elem[0]
-                # 删除一行之后下标会自动改变
                 del expr_elem[0]
                 flag = True
 
@@ -81,9 +79,6 @@ def countnum(xml_path):
 
 def xml_file_path(xml_path):
     global flag
-    # xml_path 需要转化的xml路径
-    # sub_dir_list 每个作者的包名
-    # name_list 具体的xml文件名
     save_xml_file = './transform_xml_file/pointer_to_array'
     transform_java_file = './pre_file/transform_c/pointer_to_array'
     if not os.path.exists(transform_java_file):
@@ -92,15 +87,11 @@ def xml_file_path(xml_path):
         os.mkdir(save_xml_file)
     for xml_path_elem in xml_path:
         xmlfilepath = os.path.abspath(xml_path_elem)
-        # 解析成树
         e = init_parse(xmlfilepath)
-        # 转换
         flag = False
         transform(e)
-        # 保存文件
         if flag == True:
             str = xml_path_elem.split('\\')[-1]
-            # sub_dir 输出的是作者包名
             sub_dir = xml_path_elem.split('\\')[-2]
             path = os.path.join(save_xml_file, sub_dir)
 

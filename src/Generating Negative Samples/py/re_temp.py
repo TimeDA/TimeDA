@@ -51,7 +51,6 @@ def get_instances(e):
         #print(decl_index)
 
         if len(decls) <= decl_index: continue
-        #从decls[decl_index]的上一个开始  对下边所有的进行移动
         prev = decls[decl_index]
 
         for decl in decls[decl_index:]:
@@ -90,9 +89,7 @@ def get_instances(e):
 def trans_temp_var(e,ignore_list=[], instances=None):
     global flag
     flag = False
-    # 只考虑循环和条件体中的临时变量  获取<block_content>标签
     decls = [get_instances(e) if instances is None else (instance[0] for instance in instances if len(instance)>0)]
-    # 获取该语句块中的所有起始临时变量
 
     tree_root = e('/*')[0].getroottree()
     new_ignore_list = []
@@ -120,7 +117,6 @@ def get_style(xmlfilepath):
     e = init_parse(xmlfilepath)
     num=0
     block_cons = get_block_cons(e)
-    # 获取该语句块中的所有起始临时变量
 
     for block_con in block_cons:
         vars_names=[]
@@ -170,9 +166,7 @@ def xml_file_path(xml_path):
 
     for xml_path_elem in xml_path:
         xmlfilepath = os.path.abspath(xml_path_elem)
-        # 解析成树
         e = init_parse(xmlfilepath)
-        # 转换
         flag = False
         trans_temp_var(e)
         if flag == True:

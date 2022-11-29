@@ -57,12 +57,10 @@ def get_instances(e):
     instances = []
     block_cons=get_block_cons(e)
     for block_con in block_cons:
-        ls_decl=[] #存储头部定义的变量
-        #获取头部定义的变量
+        ls_decl=[]
         for decl_stml in block_con:
             if decl_stml.tag!='{http://www.srcML.org/srcML/src}decl_stmt':
                 break
-            #如果起始是decl_stmt则获取里头符合要求的所有decl
             for decl in decl_stml:
                 if len(decl) == 2 or len(decl) == 3:  # and decl[2][0][0].tag=='{http://www.srcML.org/srcML/src}literal'):
                     modifier_num = decl[0].xpath("src:modifier", namespaces=ns)
@@ -75,8 +73,8 @@ def get_instances(e):
                             decl[0].remove(modi)
                         modifier.text+=' '
                         decl.insert(1, modifier)
-                    ls_decl.append(decl)  # 获取decl标签
-        for decl in ls_decl:   #给所有decl加上变量类型
+                    ls_decl.append(decl)  
+        for decl in ls_decl:
             typ = deepcopy(decl.getparent()[0][0])
             if len(decl[0])==0:
                 decl.remove(decl.getchildren()[0])
@@ -100,17 +98,12 @@ def get_instances(e):
 
             if f==True:
                 instances.append((decl_prev, decl, block_con, des_index,b_ele))
-            # elif decl.getparent().index(decl)!=1:
-            #     decl.remove(decl[0])
     return instances
 
 def trans_temp_var(e,ignore_list=[],instances=None):
     global flag
     flag=False
-    #只考虑循环和条件体中的临时变量  获取<block_content>标签
     decls=[get_instances(e) if instances is None else (instance[0] for instance in instances if len(instance)>0)]
-    #获取该语句块中的所有起始临时变量
-
     tree_root = e('/*')[0].getroottree()
     new_ignore_list = []
     block_con=[]
@@ -137,49 +130,18 @@ def trans_temp_var(e,ignore_list=[],instances=None):
 
     block_s = get_block_cons(e)
     for block_ in block_s:
-        ls_dec = []  # 存储头部定义的变量
-        # 获取头部定义的变量
+        ls_dec = []
         for decl_stml in block_:
             if decl_stml.tag != '{http://www.srcML.org/srcML/src}decl_stmt':
                 break
-            # 如果起始是decl_stmt则获取里头符合要求的所有decl
             for decl in decl_stml:
                 if len(decl) == 2 or len(decl) == 3:# and decl[2][0][0].tag == '{http://www.srcML.org/srcML/src}literal'):
-                    ls_dec.append(decl)  # 获取decl标签
+                    ls_dec.append(decl)  
         for decl in ls_dec:
             if decl.getparent().tag == '{http://www.srcML.org/srcML/src}decl_stmt' and decl.getparent().index(decl) != 0:
                 decl.remove(decl.getchildren()[0])
 
     return flag, tree_root, new_ignore_list
-
-
-        #删除多余的变量名类型
-        #
-        #init_temps=get_init_temps(block_con)
-        # #获取当前语句块下表达式语句中的name
-        # exprs=get_exprs(block_con)
-        # #防止有多变量声明  先给每个变量名的类型加上
-        # for init_tmp in init_temps:
-        #     typ=str(init_tmp.getparent()[0][0][0].text)+' '
-        #     if len(init_tmp[0])==0:
-        #         init_tmp[0].text=typ
-        # for init_tmp in init_temps:
-        #     for expr in exprs:
-        #         if init_tmp[1].text==expr.text:#当临时变量名与表达式中第一个变量匹配上就删除该临时变量的定义
-        #             #先获取变量类型 然后加到表达式前边 之后删除该变量声明
-        #             if init_tmp.tail!=';':
-        #                 init_tmp.tail=''
-        #                 init_tmp[-1].tail=';\n'
-        #             expr.getparent().insert(0,init_tmp)
-        #             flag=True
-        #             break
-        # #删除多余的变量名类型
-        # re_temps=get_init_temps(block_con)
-        # for init_tmp in re_temps[1:]:
-        #     init_tmp[0].text=''
-
-
-
 
 
 def save_file(doc, param):
@@ -191,18 +153,17 @@ def get_style(xmlfilepath):
 
     num=0
     block_cons = get_block_cons(e)
-    # 获取该语句块中的所有起始临时变量
+
     for block_con in block_cons:
-        ls_decl = []  # 存储头部定义的变量
-        # 获取头部定义的变量
+        ls_decl = [] 
         for decl_stml in block_con:
             if decl_stml.tag != '{http://www.srcML.org/srcML/src}decl_stmt':
                 break
             for decl in decl_stml:
                 if len(decl) == 2 or (
                         len(decl) == 3 and len(decl[2])>0 and len(decl[2][0])>0 and decl[2][0][0].tag == '{http://www.srcML.org/srcML/src}literal'):
-                    ls_decl.append(decl)  # 获取decl标签
-        for decl in ls_decl:  # 给所有decl加上变量类型
+                    ls_decl.append(decl)  
+        for decl in ls_decl: 
             typ = deepcopy(decl.getparent()[0][0])
             if len(decl[0]) == 0:
                 pass
@@ -226,9 +187,7 @@ def xml_file_path(xml_path):
 
     for xml_path_elem in xml_path:
         xmlfilepath = os.path.abspath(xml_path_elem)
-        # 解析成树
         e = init_parse(xmlfilepath)
-        # 转换
         flag = False
         trans_temp_var(e)
         if flag == True:

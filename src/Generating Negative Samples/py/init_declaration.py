@@ -46,14 +46,10 @@ def tramsform(e, ignore_list=[], instances=None):
     block_contents = [get_b_cont(e) if instances is None else (instance[0] for instance in instances)]
     tree_root = e('/*')[0].getroottree()
     new_ignore_list = []
-    #获取所有的block_content标签 即{}中的语句块
-    #遍历其中的每一个{}语句块找到单独的赋值初始化语句
     for item in block_contents:
         for block_content in item:
-            #获得block_content下的所有初始化语句
             decl_stmts=[]
             vars_names = []
-            #用一个列表来保留唯一一个类型
             for dec_stmt in block_content:
                 if dec_stmt.tag!='{http://www.srcML.org/srcML/src}decl_stmt':
                     ls=[]
@@ -64,7 +60,7 @@ def tramsform(e, ignore_list=[], instances=None):
                         if decl_stmt_prev_path in ignore_list:
                             continue
                         key=0
-#------------------------------------排除合并的时候前边有使用过的变量-----------
+
                         rep_var_flag = False
                         curr_names = get_allnames(decl_stmt)
                         for curr_name in curr_names:
@@ -84,8 +80,7 @@ def tramsform(e, ignore_list=[], instances=None):
                             else:
                                 vars_names.append("".join(d[1][0].itertext()))
                         if rep_var_flag == True: continue
-                        #----------------------------------end--------------------
-                        #---------------处理type存在多类型的情况---------
+
                         for decl in decl_stmt:
                             if len(decl) == 2 or len(decl) == 3:  # and decl[2][0][0].tag=='{http://www.srcML.org/srcML/src}literal'):
                                 modifier_num = decl[0].xpath("src:modifier", namespaces=ns)
@@ -98,7 +93,6 @@ def tramsform(e, ignore_list=[], instances=None):
                                         decl[0].remove(modi)
                                     modifier.text+=' '
                                     decl.insert(1, modifier)
-                        #----------------------------------end---------
                         if len(decl_stmt)!=0 and len(decl_stmt[0])!=0 and len(decl_stmt[0][0])!=0 and len(decl_stmt[0][0][0])==0:
                             for l in ls:
                                 if ''.join(decl_stmt[0][0].itertext()).replace(' ', '') == ''.join(l[0][0].itertext()).replace(' ',''):  # and decl_stmt[0][0][0].text==l[0][0][0].text:
@@ -121,7 +115,7 @@ def tramsform(e, ignore_list=[], instances=None):
                                     key=1
                                     break
                             if key==0:
-                                #flag用于标志是否有新的类型 加入列表
+                            
                                 ls.append(decl_stmt)
                             if flag:
                                 new_ignore_list.append(decl_stmt_prev_path)
@@ -139,11 +133,8 @@ def save_file(doc, file):
 def get_style(e):
     num=0
     block_contents = get_b_cont(e)
-    # 遍历其中的每一个{}语句块找到单独的赋值初始化语句
     for block_content in block_contents:
-        # 获得block_content下的所有初始化语句
         decl_stmts = []
-        # 用一个列表来保留唯一一个类型
         for decl_stmt in block_content:
             if decl_stmt.tag != '{http://www.srcML.org/srcML/src}decl_stmt':
                 ls = []
@@ -157,7 +148,6 @@ def get_style(e):
                                 key = 1
                                 break
                         if key == 0:
-                            # flag用于标志是否有新的类型 加入列表
                             ls.append(decl_stmt)
                 decl_stmts = []
             else:
@@ -172,9 +162,7 @@ def xml_file_path(xml_path):
         os.mkdir(save_xml_file)
     for xml_path_elem in xml_path:
         xmlfilepath = os.path.abspath(xml_path_elem)
-        # 解析成树
         e = init_parser(xmlfilepath)
-        # 转换
         flag = False
         tramsform(e)
         if flag == True:

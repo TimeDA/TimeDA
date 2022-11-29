@@ -7,8 +7,8 @@ from lxml.etree import Element
 
 from test_transform.py import typedef
 
-path='.\\typ'#特征作者提取xml文件库
-d_path='.\\des'#替换目标作者xml文件库
+path='.\\typ'
+d_path='.\\des'
 
 from lxml import etree
 doc=None
@@ -16,13 +16,13 @@ ns = {'src': 'http://www.srcML.org/srcML/src',
    'cpp': 'http://www.srcML.org/srcML/cpp',
    'pos': 'http://www.srcML.org/srcML/position'}
 
-ls=[] #元素为列表[1,2,3] 1宏定义名出现次数 2宏定义名 3宏定义值（不同值只选第一个）
+ls=[] 
 
 
 key_words = ['int', 'long', 'union','enum','long long', 'double', 'char', 'string', 'float', 'vector','pair','bool','void','signed','unsigned','short','std']
 
 
-def_Min=2 #设定宏定义阈值
+def_Min=2 
 
 
 def parse_src(file):
@@ -55,9 +55,7 @@ def save_file(doc, f):
 
 
 def trans_define(e,l,varnames):
-    #获得所有的宏定义标签
     defines=get_defines(e)
-    #首先排除已存在的相同define标签
     if l[1] in varnames:return
     for define in defines:
         if len(define)<=1:continue
@@ -74,7 +72,6 @@ def trans_define(e,l,varnames):
             elem.getparent().insert(des+1,l[2])
         else:
             des=0
-            print("文件既没有using也没有include")
             elem=e('//src:unit')[0]
             elem.insert(des,l[2])
 
@@ -82,14 +79,13 @@ def trans_define(e,l,varnames):
 def creat_def_list(e,src_var_names):
     global ls
     typedef_name=[]+key_words
-    #获取define标签
     defines=get_defines(e)
     flag=0
     for define in defines:
         if len(define)<=1:continue
         if define[0][0].tag != '{http://www.srcML.org/srcML/src}struct' and define[0][0].tag != '{http://www.srcML.org/srcML/src}union' and define[0][0].tag != '{http://www.srcML.org/srcML/src}enum':
             for l in ls:
-                if define[1].text==l[1]:  #找到有该宏定义名
+                if define[1].text==l[1]: 
                     l[0]+=1
                     flag=1
                     break
@@ -107,21 +103,17 @@ def creat_def_list(e,src_var_names):
             flag=0
 
 def del_typedef(del_ls, e,node_typ):
-    #e有del_ls列表里头没有的  就去掉有的
     type_defines = get_defines(e)
     names = get_allname(e)
     for type_define in type_defines:
         if len(type_define)<=1:continue
         if type_define[0][0].tag != '{http://www.srcML.org/srcML/src}struct' and type_define[0][0].tag != '{http://www.srcML.org/srcML/src}union' and type_define[0][0].tag != '{http://www.srcML.org/srcML/src}enum':  # len(define[0][0]) == 0 and
 
-
-            # 获取定义类型不是struct的
-
-            define_name = type_define[1].text  # 获取typedef的名字
+            define_name = type_define[1].text 
 
             name_replace = ''.join(type_define[0].itertext())
             # for part_name in define[0]:
-            #     name_replace = name_replace + " " + str(part_name.text)  # 直接累加名字拼凑成字符串
+            #     name_replace = name_replace + " " + str(part_name.text)
             for name in names:
                 if len(name)!=0:continue
                 if name.text == define_name and name.getparent().tag != '{http://www.srcML.org/srcML/src}typedef':
@@ -153,11 +145,8 @@ def program_transform(program_path,author_path,ignore_list=[]):
     typedef.trans_define(src_e)
     src_var_names=[t.text for t in get_all_var_name(src_e) if len(t)==0 and t.text not in key_words]
     for f in files:
-        #对一个文件列表循环解析
         e = init_parse(f)
-        #每循环一个文件记录其中的宏定义
         creat_def_list(e,src_var_names)
-    #取超过阈值的宏定义  新增到目标作者的源代码中
     des=[f for f in glob.glob(d_path+'**/*.xml',recursive=True)]
     e = init_parse(program_path)
     global flag
@@ -181,7 +170,6 @@ def program_transform(program_path,author_path,ignore_list=[]):
 
         flag = True
         value_name = l[1]
-        # 记录typedef名字
         new_ignore_list.append(value_name)
     save_file(doc, './style/style.xml')
     ls=[]

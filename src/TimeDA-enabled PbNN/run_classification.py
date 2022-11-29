@@ -19,8 +19,8 @@ import torch
 import subprocess
 
 
-data_files_dir = "/home/zss/data/project5/nn_DA/datasets/java_12_18/gcj2018"
-g_modelfile="/home/zss/data/project5/nn_DA/attribution/authorship_pipeline/nn_output/DA_cpp12_18/train_10/"
+data_files_dir = "/home/user/data/project5/nn_DA/datasets/java_12_18/gcj2018"
+g_modelfile="/home/user/data/project5/nn_DA/attribution/authorship_pipeline/nn_output/DA_cpp12_18/train_10/"
 
 
 def output_filename(input_file):

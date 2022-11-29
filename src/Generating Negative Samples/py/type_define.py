@@ -56,9 +56,7 @@ def get_instances(e):
 def trans_define(e,ignore_list=[], instances=None):
     global flag
     flag=False
-    #获得所有的宏定义标签
     names = [get_instances(e) if instances is None else (instance[0] for instance in instances)]
-    #获得所有的name标签 只要name和宏定义的name相同则替换宏定义中的值
     
     tree_root=e('/*')[0].getroottree()
     new_ignore_list=[]
@@ -70,13 +68,10 @@ def trans_define(e,ignore_list=[], instances=None):
             define_value = inst_tuple[1]
             value_name = inst_tuple[2]
             define = inst_tuple[3]
-
-            #记录define的名字  并与ignore_list对比 如果有加入的同名则跳过
             if value_name in ignore_list: continue
             flag = True
             name.text=define_value
 
-            #记录define名字
             new_ignore_list.append(value_name)
             if define.getparent() is None:continue
             define.getparent().remove(define)
@@ -85,7 +80,7 @@ def get_style(xmlfilepath):
     e = init_parse(xmlfilepath)
     num=False
     defines = get_defines(e)
-    # 获得所有的name标签 只要name和宏定义的name相同则替换宏定义中的值
+
     names = get_allname(e)
     for define in defines:
         if len(define) == 3 and len(define[1]) == 1:
@@ -128,9 +123,7 @@ def xml_file_path(xml_path):
         os.mkdir(save_xml_file)
     for xml_path_elem in xml_path:
         xmlfilepath = os.path.abspath(xml_path_elem)
-        # 解析成树
         e = init_parse(xmlfilepath)
-        # 转换
         flag = False
         print(xml_path_elem)
         trans_define(e)

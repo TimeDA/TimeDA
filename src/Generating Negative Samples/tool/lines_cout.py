@@ -23,5 +23,5 @@ def line_cout(path):
         break
 if __name__ == '__main__':
     path1 = './gcj'
-    path2 = './40authors'
+    path2 = './authors'
     line_cout(path1)

@@ -36,7 +36,7 @@ def transform_nontmp_id_names(src_author, dst_author, ignore_list=[], save_to='t
 	diff = {k : dst_all[k] for k in set(dst_all) - set(dst_tmp) - intersect - set(src_templates) - set(dst_templates)}
 	dst_func_vars_type = {k : {'type': 'function'} for k in set(dst_funcs)}
 	dst_all_vars_type.update(dst_func_vars_type)
-	dst_all_vars_type = {k : dst_all_vars_type[k] for k in set(dst_all_vars_type) - set(dst_tmp) - intersect - set(src_templates) - set(dst_templates)} #不能换成原作者已经有的变量名
+	dst_all_vars_type = {k : dst_all_vars_type[k] for k in set(dst_all_vars_type) - set(dst_tmp) - intersect - set(src_templates) - set(dst_templates)} 
 	src_nontmp = {k : src_all[k] for k in set(src_all) - set(src_tmp) - set(src_templates)}
 	src_nontmp = sorted(src_nontmp.items(), key = lambda d: d[1], reverse=True)
 	diff = sorted(diff.items(), key = lambda d: d[1], reverse=False)

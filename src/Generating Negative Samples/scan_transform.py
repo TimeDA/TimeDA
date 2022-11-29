@@ -1,5 +1,6 @@
 import os
 import sys
+
 cur_path = os.path.abspath('.')
 up_path = os.path.dirname(cur_path)
 sys.path.append(up_path)
@@ -43,6 +44,7 @@ def move_change(file_name, pre_author_name, author_name):
         os.mkdir(path)
     scan.cmd(command='mv ./style/transform/* '+path)
     scan.cmd(change_name)
+    
 if __name__ == '__main__':
     program_path = './pre_file/java_cpp_file'
     author_path = './author_style'

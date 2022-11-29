@@ -44,16 +44,6 @@ def get_standalone_exprs(e):
 		standalone_exprs.append(expr[0])
 	return standalone_exprs
 
-#自增自减运算符的前缀/后缀互相变换
-#i++/++i
-#第一步：获取所有表达式语句
-#第二步：从中选出只含一个表达式的语句
-#第三步：对每个这样的语句，获取其中的运算符
-#第四步：判断句中是否只有一个运算符，不是则不符合条件
-#第五步：判断该运算符是否为++或--，不是则不符合条件
-#第六步：假设为++，判断运算符是其父节点的第几个孩子，第0个则为前缀运算符，否则为后缀运算符
-#第七步：如果是前缀，删除该运算符并把++写到表达式后面
-#第八步：如果是后缀，删除该运算符并把++写到表达式前面
 def transform_standalone_stmts(e):
 	global flag
 	exprs = get_standalone_exprs(e)
@@ -110,11 +100,9 @@ def transform(e, src_style, dst_style, ignore_list=[], instances=None):
 		for incr_expr in item:
 			incr_expr_grandparent = incr_expr.getparent().getparent()
 			if incr_expr_grandparent is None:
-				#print('判断失败')
 				return flag, tree_root, new_ignore_list
 			incr_expr_grandparent_path = tree_root.getpath(incr_expr_grandparent)
 			if incr_expr_grandparent_path in ignore_list:
-				#print('变换过，忽略')
 				continue
 
 			opr = get_operator(incr_expr)
@@ -174,9 +162,6 @@ def transform(e, src_style, dst_style, ignore_list=[], instances=None):
 
 def xml_file_path(xml_path):
 	global flag
-	# xml_path 需要转化的xml路径
-	# sub_dir_list 每个作者的包名
-	# name_list 具体的xml文件名
 	save_xml_file = './transform_xml_file/incr_opr_prepost'
 	transform_java_file = './pre_file/transform_java/incr_opr_prepost'
 	if not os.path.exists(transform_java_file):
@@ -185,12 +170,10 @@ def xml_file_path(xml_path):
 		os.mkdir(save_xml_file)
 	for xml_path_elem in xml_path:
 			xmlfilepath = os.path.abspath(xml_path_elem)
-			# 解析成树
+
 			e = init_parser(xmlfilepath)
-			# 转换
 			flag = False
 			transform_standalone_stmts(e)
-			# 保存文件
 			if flag == True:
 				str = xml_path_elem.split('/')[-1]
 				sub_dir = xml_path_elem.split('/')[-2]

@@ -81,21 +81,7 @@ def save_tree_to_file(tree, file):
 	with open(file, 'w') as f:
 		f.write(etree.tostring(tree).decode('utf8'))
 
-#动态内存分配转静态
-#int *a = (int *)malloc(sizeof(int) * 8);
-#int a[8];
-#第一步：找到所有带malloc的声明语句
-#第二步：对每个这样的语句，获取声明的类型名和变量名
-#第三步：获取malloc参数的表达式
-#第四步：获取表达式中所有运算符
-#第五步：检查运算符是否只有(, ), *这三种，符合条件的动态内存分配才能变换为静态数组分配
-#第六步：检查表达式中是否有sizeof，没有则不符合条件
-#第七步：检查表达式中是否有前面获取的类型名，没有则不符合条件
-#第八步：检查表达式中是否有乘号（*），没有则不符合条件
-#第九步：上述条件都符合，进行变换，把表达式按*号分割开
-#第十步：分割的每一部分中，不含sizeof的部分都用*号连接起来，作为静态数组的长度（应检查这部分是否都为常量，尚未实现）
-#第十一步：构造静态数组声明语句：类型名+变量名[静态数组长度]
-#第十二步：用新构造的语句替换原来的声明语句
+
 def dyn_to_static(e, ignore_list=[], instances=None):
 	global flag
 	flag = False
@@ -108,7 +94,6 @@ def dyn_to_static(e, ignore_list=[], instances=None):
 			decl_stmt_prev = decl_stmt_prev if decl_stmt_prev is not None else decl_stmt
 			decl_stmt_prev_path = tree_root.getpath(decl_stmt_prev)
 			if decl_stmt_prev_path in ignore_list:
-				print('变换过，忽略')
 				continue
 
 			decl = get_decl(decl_stmt)
@@ -157,9 +142,6 @@ def dyn_to_static(e, ignore_list=[], instances=None):
 
 def xml_file_path(xml_path):
 	global flag
-	# xml_path 需要转化的xml路径
-	# sub_dir_list 每个作者的包名
-	# name_list 具体的xml文件名
 	save_xml_file = './transform_xml_file/dyn_static_mem'
 	transform_java_file = './pre_file/transform_java/dyn_static_mem'
 	if not os.path.exists(transform_java_file):
@@ -168,12 +150,9 @@ def xml_file_path(xml_path):
 		os.mkdir(save_xml_file)
 	for xml_path_elem in xml_path:
 			xmlfilepath = os.path.abspath(xml_path_elem)
-			# 解析成树
 			e = init_parser(xmlfilepath)
-			# 转换
 			flag = False
 			dyn_to_static(e)
-			# 保存文件
 			if flag == True:
 				str = xml_path_elem.split('/')[-1]
 				sub_dir = xml_path_elem.split('/')[-2]

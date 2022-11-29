@@ -48,21 +48,10 @@ def compare(pre_file, last_file):
             if pre_line == last_line:
                 count +=1
                 break
-    # print("~~~~~~")
-    # print("作者：",len(pre_lines))
-    # print("~~~~~~")
-    # print(count)
 
     if count / len(pre_lines) > 0.5:
         return True
-    # else:
-    #     if count / len(last_lines) > 0.6:
-    #         return True
 
-    # if count/len(pre_lines)>0.7 or count/len(last_lines)>0.7:
-    #     return True
-    # elif len(pre_lines) > 300 and count > 50 or len(last_lines) > 300 and count > 50:
-    #     return True
 if __name__ == '__main__':
     path = './test'
     for dirs in os.listdir(path):

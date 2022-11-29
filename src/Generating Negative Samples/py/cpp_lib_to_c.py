@@ -28,7 +28,7 @@ def get_typename(elem):
 def get_vars_and_types(func):
     var_list = {}
     decls = func.xpath('.//src:decl', namespaces=ns)
-    decls += func.xpath('/src:unit/src:decl_stmt/src:decl', namespaces=ns) #全局变量
+    decls += func.xpath('/src:unit/src:decl_stmt/src:decl', namespaces=ns)
     for decl in decls:
         name = decl.xpath('src:name', namespaces=ns)
         if len(name)==0:continue
